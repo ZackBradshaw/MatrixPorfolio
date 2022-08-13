@@ -1,0 +1,57 @@
+.project-image {
+    opacity: 0; 
+    position: fixed;
+    bottom: 254px;
+  }   
+
+.wrapper {
+    display: flex;
+    z-index: 1;
+    position: absolute;
+    overflow: hidden;
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.wrapper Canvas::after{
+  content: '';
+  display: block;
+}
+
+.wrapper Canvas {
+  height: auto;
+  min-width: 206px;
+  min-height: 103px;
+  position: absolute;
+  bottom: 254px;
+}
+
+.startpos{
+  height: auto;
+  min-width: 206px;
+  min-height: 103px;
+  position: absolute;
+  bottom: 254px;
+}
+
+@media screen and (max-width: 768px) {
+
+  .wrapper Canvas {
+    height: auto;
+    min-width: 158px;
+    min-height: 78px;
+    position: absolute;
+    bottom: 206px;
+  }
+
+  .startpos{
+    height: auto;
+    min-width: 158px;
+    min-height: 78px;
+    position: absolute;
+    bottom: 206px;
+  }
+}
+  
