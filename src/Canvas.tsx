@@ -1,19 +1,23 @@
-import React, { componentDidMount, useEffect, useRef } from "react";
-import $ from "jquery";
+import React, {   useEffect, useRef } from "react";
 import "./canvas.css";
 import "./App.css";
-
-import DeskImg from "./images/Desk.png";
 import Temple1 from "./images/Temple1.png";
-import Temple2 from "./images/Temple2.png";
-import Temple3 from "./images/Temple3.png";
-import Temple4 from "./images/Temple4.png";
+import {throttle} from 'throttle-debounce'
+import {ParticlesComp} from "./Particles";
 
-const Canvas = (props) => {
-  const canvasRef = useRef(null);
+interface ICanvasProps {
+  className?: string;
+}
+
+const Canvas = ({ className }: ICanvasProps) => {
+
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapper = useRef<HTMLDivElement>(null); 
+  const startpos = useRef<HTMLDivElement>(null);
+  const particles = useRef<HTMLDivElement>(null);
 
   let imgIndex = 0;
-  let imgArr = [];
+  let imgArr : HTMLImageElement[] = [];
   let percent = 0.001;
   let atStart = false;
 
@@ -27,51 +31,60 @@ const Canvas = (props) => {
     document.body.append(elImage);
     imgArr.push(elImage);
   });
-
+  
   useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
 
-    scroll();
-    function scroll() {
-      document
-        .getElementById("wrapper")
-        .addEventListener("wheel", function (event) {
-          const wScroll = event.deltaY / 10;
-          const offsetElement = $(".wrapper");
-          const offsetPosition = offsetElement.offset().top;
-          let targetCube = $(".wrapper Canvas");
-          let startEl = $(".startpos");
-          let currentPosition = targetCube.offset().top;
-          let startpos = startEl.offset().top;
-          atStart = currentPosition >= startpos - 20;
-          if (percent >= 0.3) {
-            var newPosition = currentPosition + wScroll - offsetPosition;
-          }
-          targetCube.css({
-            top: newPosition,
+      const canvas = canvasRef.current
+
+      function scroll() {
+          wrapper.current?.addEventListener("wheel", function(event : WheelEvent ) {
+            const wScroll = event.deltaY / 10;
+            const offsetPosition = wrapper.current?.offsetTop ?? 0
+            let particlesPos = particles.current?.getBoundingClientRect()?.top ?? 0;
+            let currentPosition = canvasRef.current?.getBoundingClientRect()?.top ?? 0;
+            let newPosition = null;
+            let startoffset = startpos.current?.getBoundingClientRect()?.top ?? 0;
+            atStart = currentPosition >= startoffset - 3;
+            if (percent >= 0.3) {
+              let newPosition = currentPosition + wScroll - offsetPosition;
+              let newParticlesPos = particlesPos + wScroll - offsetPosition;
+              if (canvasRef.current && particles.current) {
+                canvasRef.current.style.top = newPosition + 'px'
+                particles.current.style.top = newParticlesPos + 'px'
+              }
+            }
           });
-          console.log(startpos);
-        });
-    }
-
-    document.getElementById("wrapper").addEventListener("wheel", function (e) {
-      if (e.deltaY / 120 < 0 && percent < 0.3) {
-        percent += 0.01;
-      } else if (e.deltaY / 120 > 0 && percent > 0.001 && atStart) {
-        percent -= 0.01;
       }
-    });
 
-    function drawImage(idx) {
-      let { width, height } = imgArr[idx].getBoundingClientRect();
-      canvas.width = width * window.devicePixelRatio;
-      canvas.height = height * window.devicePixelRatio;
-      canvas.style.width = `${width}px`;
-      canvas.style.height = `${height}px`;
+      scroll();
+      
+      wrapper.current?.addEventListener("wheel", function (e : WheelEvent) {
+        if (e.deltaY / 120 < 0 && percent < 0.3) {
+          percent += 0.01;
+        } else if (e.deltaY / 120 > 0 && percent > 0.001 && atStart) {
+          percent -= 0.01;
+        }
+      });
 
-      ctx.webkitImageSmoothingEnabled = false;
-      ctx.msSmoothingEnabled = false;
+      function drawImage(idx : any) {
+
+      if (!canvas) {
+        return;
+      }
+      
+      const ctx = canvas.getContext("2d");
+
+      if(!ctx) {
+        return 
+      }
+
+      ctx.imageSmoothingEnabled = false;
+        let { width, height } = imgArr[idx].getBoundingClientRect();
+        canvas.width = width * window.devicePixelRatio;
+        canvas.height = height * window.devicePixelRatio;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
       ctx.imageSmoothingEnabled = false;
 
       let scaledWidth = width * percent;
@@ -108,9 +121,12 @@ const Canvas = (props) => {
   }, [imgArr, imgIndex]);
 
   return (
-    <div className="wrapper" id="wrapper">
-      <div className="startpos" id="startpos"></div>
-      <canvas className="Canvas" id="canvas" ref={canvasRef} {...props} />
+    <div className={`wrapper ${className}`} ref={wrapper} >
+      <div className="startpos" ref={startpos}></div>
+        <canvas className="Canvas" ref={canvasRef} />
+        <div ref={particles}  >
+          <ParticlesComp />
+        </div>
     </div>
   );
 };

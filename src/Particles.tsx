@@ -1,17 +1,25 @@
-﻿
-import React, { useCallback, useMemo } from 'react';
+﻿import React, { forwardRef, useCallback, useMemo } from 'react';
+import "./particles.css";
 import type { Engine } from 'tsparticles-engine';
 import Particles from 'react-tsparticles';
 import { loadBubblesPreset } from 'tsparticles-preset-bubbles';
-import { loadSlim } from 'tsparticles-slim';
 
-export function ParticlesComp() {
-    const options = useMemo(() => {
+interface IParticlesProps {
+  className?: string;
+}
+
+export const ParticlesComp = forwardRef((props, ref) => {
+    const options : any = useMemo(() => {
         return {
             fullScreen: {
                 enable: false,
                 zIndex: -2,
             },
+            
+            tsparticles: {
+                height: 60
+            },
+            
 
             particles: {
                 shape: {
@@ -129,15 +137,8 @@ export function ParticlesComp() {
         };
     }, []);
 
-    //
-    // particlesJS.load('particles-js', '/vendors/particles.js-master/particles.json', function() {
-    //     console.log('callback - particles.js config loaded');
-    //         let el = document.querySelector(".particles-js-canvas-el"); el.setAttribute("height", "300px");
-    // });
-
     const particlesInit = useCallback((engine: Engine): any => {
-        loadSlim(engine);
         loadBubblesPreset(engine);
     }, []);
-    return <Particles className={styles.particles} init={particlesInit} options={options} />;
-}
+    return <Particles id="tsparticles" className="particles" init={particlesInit} options={options} />;
+});
