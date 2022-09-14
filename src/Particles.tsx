@@ -1,5 +1,4 @@
 ﻿import React, { forwardRef, useCallback, useMemo } from 'react';
-import "./particles.css";
 import type { Engine } from 'tsparticles-engine';
 import Particles from 'react-tsparticles';
 import { loadBubblesPreset } from 'tsparticles-preset-bubbles';
@@ -8,7 +7,7 @@ interface IParticlesProps {
   className?: string;
 }
 
-export const ParticlesComp = forwardRef((props, ref) => {
+export const ParticlesComp = (({className}: IParticlesProps) => {
     const options : any = useMemo(() => {
         return {
             fullScreen: {
@@ -19,11 +18,27 @@ export const ParticlesComp = forwardRef((props, ref) => {
             tsparticles: {
                 height: 60
             },
-            
+
+            background: {
+                opacity: {
+                    value: 1
+                },
+            },
 
             particles: {
+
                 shape: {
-                    type: 'circle',
+                    options: {
+                        polygon: {
+                            nb_sides: 4,
+                            particles: {
+                                size: {
+                                    value: 100
+                                    },
+                                },
+                            },
+                        },
+                    type : "polygon"
                 },
 
                 move: {
@@ -126,10 +141,11 @@ export const ParticlesComp = forwardRef((props, ref) => {
                     height: 0,
                     width: 10,
                 },
-                direction: 'top',
+                direction: 'bottom',
+
                 position: {
-                    x: 40,
-                    y: 80,
+                    x: 50,
+                    y: 30,
                 },
             },
 
@@ -140,5 +156,5 @@ export const ParticlesComp = forwardRef((props, ref) => {
     const particlesInit = useCallback((engine: Engine): any => {
         loadBubblesPreset(engine);
     }, []);
-    return <Particles id="tsparticles" className="particles" init={particlesInit} options={options} />;
-});
+
+    return <Particles id="tsparticles" className={className} init={particlesInit} options={options} />; });

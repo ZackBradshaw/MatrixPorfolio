@@ -4,6 +4,7 @@ import "./App.css";
 import Temple1 from "./images/Temple1.png";
 import {throttle} from 'throttle-debounce'
 import {ParticlesComp} from "./Particles";
+import { upload } from "@testing-library/user-event/dist/upload";
 
 interface ICanvasProps {
   className?: string;
@@ -15,6 +16,7 @@ const Canvas = ({ className }: ICanvasProps) => {
   const wrapper = useRef<HTMLDivElement>(null); 
   const startpos = useRef<HTMLDivElement>(null);
   const particles = useRef<HTMLDivElement>(null);
+  const uploadObject = useRef<HTMLDivElement>(null);
 
   let imgIndex = 0;
   let imgArr : HTMLImageElement[] = [];
@@ -37,20 +39,18 @@ const Canvas = ({ className }: ICanvasProps) => {
       const canvas = canvasRef.current
 
       function scroll() {
-          wrapper.current?.addEventListener("wheel", function(event : WheelEvent ) {
+            wrapper.current?.addEventListener("wheel", function(event : WheelEvent ) {
             const wScroll = event.deltaY / 10;
             const offsetPosition = wrapper.current?.offsetTop ?? 0
-            let particlesPos = particles.current?.getBoundingClientRect()?.top ?? 0;
-            let currentPosition = canvasRef.current?.getBoundingClientRect()?.top ?? 0;
+            let canvasPos = canvasRef.current?.getBoundingClientRect()?.top ?? 0;
+            let currentPosition = uploadObject.current?.getBoundingClientRect()?.top ?? 0;
             let newPosition = null;
             let startoffset = startpos.current?.getBoundingClientRect()?.top ?? 0;
-            atStart = currentPosition >= startoffset - 3;
+            atStart = canvasPos >= startoffset -6;
             if (percent >= 0.3) {
               let newPosition = currentPosition + wScroll - offsetPosition;
-              let newParticlesPos = particlesPos + wScroll - offsetPosition;
-              if (canvasRef.current && particles.current) {
-                canvasRef.current.style.top = newPosition + 'px'
-                particles.current.style.top = newParticlesPos + 'px'
+              if (uploadObject.current) {
+                uploadObject.current.style.top = newPosition + 'px'
               }
             }
           });
@@ -78,17 +78,14 @@ const Canvas = ({ className }: ICanvasProps) => {
         return 
       }
 
-      ctx.imageSmoothingEnabled = false;
         let { width, height } = imgArr[idx].getBoundingClientRect();
+        let scaledWidth = width * percent;
+        let scaledHeight = height * percent;
         canvas.width = width * window.devicePixelRatio;
         canvas.height = height * window.devicePixelRatio;
         canvas.style.width = `${width}px`;
         canvas.style.height = `${height}px`;
-
-      ctx.imageSmoothingEnabled = false;
-
-      let scaledWidth = width * percent;
-      let scaledHeight = height * percent;
+        ctx.imageSmoothingEnabled = false;
 
       if (percent >= 1) {
         ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
@@ -121,11 +118,13 @@ const Canvas = ({ className }: ICanvasProps) => {
   }, [imgArr, imgIndex]);
 
   return (
-    <div className={`wrapper ${className}`} ref={wrapper} >
+    <div className="wrapper" ref={wrapper} >
       <div className="startpos" ref={startpos}></div>
-        <canvas className="Canvas" ref={canvasRef} />
-        <div ref={particles}  >
-          <ParticlesComp />
+        <div className="uploadObject" ref={uploadObject}>
+          <canvas className="canvas" ref={canvasRef} />
+            <div ref={particles}  >
+              <ParticlesComp className="particles"/>
+            </div>
         </div>
     </div>
   );

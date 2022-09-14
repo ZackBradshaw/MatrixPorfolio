@@ -15,15 +15,9 @@
     align-items: flex-end;
 }
 
-.wrapper Canvas::after{
-  content: '';
-  display: block;
-}
-
-.wrapper Canvas {
-  height: auto;
-  min-width: 206px;
-  min-height: 103px;
+.canvas{
+  width: 206px !important;
+  height: 103px !important;
   position: absolute;
   bottom: 254px;
 }
@@ -36,22 +30,51 @@
   bottom: 254px;
 }
 
+.particles{
+  width: 206px;
+  height: 500px;
+  z-index: -1;
+  background-color: rgba(255,255,255,0.2);
+  position: absolute;
+  bottom: 151px;
+}
+
+.uploadObject{
+  height: 500px;
+  width: 206px;
+  position: absolute;
+}
+
 @media screen and (max-width: 800px) {
 
-  .wrapper Canvas {
-    height: auto;
+    .uploadObject{
+      height: 0;
+      width: 158px;
+      position: absolute;
+    }
+
+    .canvas{
+      width: 158px !important;
+      height: 78px !important;
+      position: absolute;
+      bottom: 206px;
+    }
+
+  .startpos{
     min-width: 158px;
     min-height: 78px;
     position: absolute;
     bottom: 206px;
   }
 
-  .startpos{
-    height: auto;
-    min-width: 158px;
-    min-height: 78px;
-    position: absolute;
-    bottom: 206px;
+  .particles{
+    width: 158px;
+    height: 300px;
+    z-index: -1;
+    bottom: 130px;
+    background-color: rgba(255,255,255,.0);
+    bottom: -15px;
+
   }
 }
   
